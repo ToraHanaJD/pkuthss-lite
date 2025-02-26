@@ -17,7 +17,50 @@
 % 盲审模式     blind   (默认关闭)   打开后论文按照盲审格式编译
 % 英文模式    english  (默认关闭)   打开后论文按照英文格式编译
 % 章节新页模式 openany (默认关闭)   每章都从右页（奇数页）开始；打开后每章从任意页开始（禁止章末空白页）
+\usepackage{iftex}
+\usepackage{xurl}
+\def\UrlBreaks{%
+    \do\/%
+    \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l%
+    \do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z%
+    \do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L%
+    \do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X\do\Y\do\Z%
+    \do0\do1\do2\do3\do4\do5\do6\do7\do8\do9\do=\do/\do.\do:%
+    \do\*\do\-\do\~\do\'\do\"\do\-}
+\urlstyle{same}
 
+% 引入multirow处理表格中的合并单元格
+\usepackage{multirow}
+% diagbox
+\usepackage{diagbox}
+% float
+\usepackage{float}
+
+\usepackage{amsthm}
+
+\newtheoremstyle{mytheoremstyle}% 请替换为你喜欢的样式名
+	{0.5em}% 上间距
+	{0.5em}% 下间距
+	{}% 定理内容的字体样式
+	{}% 缩进量
+	{\bfseries}% 定理标题的字体样式
+	{:}% 标题后的标点符号
+	{0.5em}% 标题与内容之间的距离
+	{}% 定理头部的额外规范
+
+{
+	\theoremstyle{mytheoremstyle}
+	\newtheorem{definition}{定义}[chapter]
+	\newtheorem{proposition}{性质}[chapter]
+}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入：}}
+\renewcommand{\algorithmicensure}{\textbf{输出：}}
 % 参考文献遵循GB/T 7714-2015标准，使用biblatex-gb7714-2015 宏包
 % 此处使用顺序编码制，如使用著者-出版年制则更改为b7714-2015ay
 \usepackage[backend=biber,style=gb7714-2015,gbnamefmt=lowercase]{biblatex}
@@ -105,7 +148,7 @@
     % 自动生成封面
     \maketitle
     % 封面要求单面打印，故须新开右页
-    \cleardoublepage
+	\cleardoublepage
     \include{chap/Copyright}
     % \includepdf{./filename.pdf}
 
@@ -121,6 +164,7 @@
     \tableofcontents
     % 如有需要自动生成表格索引、插图索引
     \listoftables
+
     \listoffigures
     % 如有需要生成主要符号对照表
     %\include{chap/Denotation}
@@ -136,7 +180,7 @@
     \appendix
     % 要使参考文献列表参与章节编号，可将“bibintoc”改为“bibnumbered”
     \printbibliography[heading=bibintoc]
-    %\include{chap/Appendix}
+    \include{chap/Appendix}
 
     %% 以下为正文之后的部分，默认不进行章节编号
     \backmatter

@@ -1,22 +1,121 @@
 {
-    "files.exclude": {
-        "**/*.aux": true,
-        "**/*.bbl": true,
-        "**/*.blg": true,
-        "**/*.cut": true,
-        "**/*.gz": true,
-        "**/*.loc": true,
-        "**/*.log": true,
-        "**/*.out": true,
-        "**/*.soc": true,
-        "**/*.lof": true,
-        "**/*.lot": true,
-        "**/*.toc": true,
-        "**/*.xdv": true,
-        "**/*.xml": true,
-        "**/*.bcf": true,
-        "**/*.fls": true,
-        "**/*.fdb_latexmk": true
-    },
-    "latex-workshop.latex.recipe.default": "latexmk (xelatex)"
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-pdf",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            // "command": "biber",
+            "args": [
+                // "%DOC%"
+                "%DOCFILE%"
+            ]
+        },
+        {
+            "name": "biber",
+            "command": "biber",
+            // "command": "biber",
+            "args": [
+                "%DOC%"
+              
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatex",
+            "tools": ["xelatex"]
+        },
+        {
+            "name": "latexmk",
+            "tools": ["latexmk"]
+        },
+        {
+            "name": "pdflatex -> bibtex",
+            "tools": ["pdflatex","bibtex"]
+        },
+        // {
+        //     "name": "pdflatex -> bibtex -> pdflatex*2",
+        //     "tools": [
+        //         "pdflatex",
+        //         "bibtex",
+        //         "pdflatex",
+        //         "pdflatex"
+        //     ]
+        // },
+        {
+            "name": "xelatex -> bibtex -> xelatex*2",
+            "tools": [
+            "xelatex",
+            "bibtex",
+            "xelatex",
+            "xelatex"
+            ]
+
+        },
+        {
+            "name": "xelatex -> biber -> xelatex*2",
+            "tools": [
+            "xelatex",
+            "biber",
+            "xelatex",
+            "xelatex"
+            ]
+
+        }
+    ],
+    //设置在编译完成后所需要删除的文件格式
+    "latex-workshop.latex.clean.fileTypes": [
+        "*.aux",
+        "*.bbl",
+        "*.blg",
+        "*.idx",
+        "*.ind",
+        "*.lof",
+        "*.lot",
+        "*.out",
+        "*.toc",
+        "*.acn",
+        "*.acr",
+        "*.alg",
+        "*.glg",
+        "*.glo",
+        "*.gls",
+        "*.ist",
+        "*.fls",
+        "*.log",
+        "*.fdb_latexmk"
+    ], 
+    "latex-workshop.latex.autoBuild.run": "onFileChange", // 在文件更改时自动编译
+    "latex-workshop.latex.recipe.default": "lastUsed", // 自动使用上一次的编译器
+    "latex-workshop.message.warning.show": false,
 }
