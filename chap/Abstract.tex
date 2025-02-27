@@ -1,31 +1,28 @@
 % Copyright (c) 2014,2016,2021 Casper Ti. Vector
 % Public domain.
-
 \begin{cabstract}
-    % TODO
-    医学知识图谱是智慧医疗辅助服务与应用的核心组成部分，是医疗事业智能化发展的基石。医学知识图谱构建面临着如下挑战：(1)医学知识覆盖面广、内容多，分布在医学文献、临床案例多源异构数据中，为信息整合与结构化带来了困难；(2)实际应用对医学知识的准确性要求高，而随着医学技术发展，医学知识也在持续更新与演化，这要求医学知识图谱也需要保持不断的更新与演化。\\
-    \indent 现有的知识图谱构建方法大致分为人工构建方法与自动化构建方法。人工构建方法通常由专家或精英群体手工构建知识图谱，构建成本较高，知识图谱规模受限。而自动化构建方法基于规则或统计学方法进行知识抽取，依赖于高质量的训练数据，知识准确率不高。\\
-    \indent 针对上述问题与挑战，本文提出了一种人机协同的医学知识图谱构建方法，设计了一种面向知识演化的多图融合机制，并在此基础上实现了一个医学知识图谱构建工具，支持多用户协同进行医学知识图谱构建。具体而言，本文的主要贡献包括：
-    \begin{itemize}
-        \item[1.] 设计了一种人机协同的医学知识图谱构建方法。该方法通过自动化抽取与人类群体获取两种方式构建医学知识图谱片段。然后，通过自动化算法对多个医学知识图谱片段进行融合。基于融合结果，通过自动化算法为个体用户提供个性化的信息反馈，以提高构建效率并改善融合结果。
-        \item[2.] 设计了一个面向知识演化的多图融合机制对知识图谱进行融合。该机制基于多路归并思想设计了一个树型结构来维护知识图谱，以实现在知识图谱更新后，高效地更新融合知识图谱。同时，该机制使用了一种基于广义熵的图融合算法，以解决不同场景下的知识图谱融合问题。
-        \item[3.] 设计并实现了一个医学知识图谱构建工具。该工具实现为一个基于B/S架构的Web服务，为用户提供一个用户友好的图形化操作界面，为多用户协同构建医学知识图谱提供支持。
-        \item[4.] 通过医学知识图谱构建实验以及仿真实验对本文方法进行评估。实验结果表明：在医学知识图谱构建实验中，在执行约四千条知识图谱更新操作的过程中，融合准确率达到98\%，精确率与召回率达到99\%；在图数目为一百、节点规模为两万的仿真实验中，一万条知识图谱更新操作的总运行时间约为41秒，单条操作的平均运行时间约为4毫秒。
-        % \item[4.] 通过医学知识图谱构建实验以及仿真实验，从融合效果、融合质量度量效果和融合效率三个维度，对本文方法进行评估。实验结果表明：（1）融合效果：在知识图谱构建实验中，在执行约四千条知识图谱更新操作的过程中，融合准确率达到98\%，精确率与召回率达到99\%；（2）融合质量度量效果：在知识图谱构建实验中，错误融合节点的熵值的平均排名为节点数的前2\%；（3）融合效率：在图数目为一百、节点规模为两万的仿真实验中，一万条知识图谱更新操作的总运行时间约为41秒，单条操作的平均运行时间约为4毫秒。
-    \end{itemize}
-\end{cabstract}
-    
-\begin{eabstract}
-The medical knowledge graph is a core component of intelligent medical assistance services and applications, serving as the foundation for the intelligent development of the medical industry. The construction of medical knowledge graphs faces several challenges. First, medical knowledge is extensive and diverse, distributed across various heterogeneous data sources such as medical literature and clinical cases, posing difficulties in information integration and structuring. Additionally, practical applications demand high accuracy in medical knowledge, and as medical technology continues to advance, medical knowledge is constantly updated and evolving, necessitating the continuous updating and evolution of medical knowledge graphs.\\
-\indent Existing methods for knowledge graph construction can be broadly classified into manual and automated approaches. Manual construction methods involve experts or elite groups manually creating knowledge graphs, which can be costly and limit the scale of the knowledge graph. On the other hand, automated construction methods rely on rules or statistical techniques for knowledge extraction, but they often depend on high-quality training data and may not achieve high accuracy.\\
-\indent To address these issues and challenges, this paper proposes a human-machine collaborative approach for medical knowledge graph construction and designs a multi-graph fusion mechanism for knowledge evolution. Based on the above approach, a medical knowledge graph construction tool is implemented, supporting multi-user collaborative participation in medical knowledge graph construction. Specifically, the main contributions of this paper include:
+\indent 形式化验证是确保操作系统内核正确性、安全性和可靠性的重要手段。本研究基于霍尔逻辑（Hoare Logic）及其扩展——分离逻辑（Separation Logic），结合Coq证明助手，开展了一项操作系统内核形式化验证的工程实践，重点验证了内存管理、进程隔离和并发同步等关键模块的正确性。通过分离逻辑的资源分离特性，我们清晰地描述并验证了内核模块的资源使用情况，避免了资源冲突和竞争条件。针对并发环境的复杂性，我们采用并发分离逻辑（Concurrent Separation Logic），确保了多线程环境下资源共享与同步机制的正确性。借助Coq的交互式证明机制，我们从高层规约逐步精化并验证了内核实现，确保其与规约的一致性。\\
+\indent 本文首先分析了操作系统形式化验证的研究现状，总结了定理证明、模型检测和符号执行等方法在操作系统验证中的应用场景及其局限性。随后，详细介绍了霍尔逻辑和分离逻辑的基本原理及其在形式化验证中的优势，特别是分离逻辑在描述动态内存分配和并发资源共享方面的表达能力。在此基础上，我们基于工程实践，利用分离逻辑对操作系统内核的关键功能模块进行了形式化规约与验证，重点验证了内存管理和并发同步机制的正确性。\\
+\indent 在验证过程中，我们充分利用分离逻辑的资源分离特性，清晰地描述和验证了内核中不同模块的资源使用情况，避免了资源竞争和冲突。针对并发环境下的复杂性，我们引入了并发分离逻辑（Concurrent Separation Logic），验证了多线程环境下的资源共享与同步机制的正确性。通过Coq证明助手的交互式证明机制，我们逐步完成了从高层规约到低层实现的精化验证，确保了内核代码与规约的一致性。\\
+\indent 本研究的贡献主要体现在以下几个方面：
 \begin{itemize}
-    \item[1.] A human-machine collaborative medical knowledge graph construction method is designed. This method constructs medical knowledge graph fragments through two methods: automated extraction and human group acquisition. Then, multiple medical knowledge graph fragments are fused through automated algorithms. Based on the fusion results, personalized information feedback is provided to individual users through automated algorithms to increase construction efficiency and improve fusion results.
-    \item[2.] A multi-graph fusion mechanism for knowledge evolution is designed to fuse a set of knowledge graphs. This mechanism designs a tree structure based on the idea of multi-way merging to maintain the knowledge graph, so as to efficiently update the fused knowledge graph after the knowledge graph is updated. At the same time, this mechanism designs a graph fusion algorithm based on generalized entropy to face the problem of knowledge graph fusion in different scenarios.
-    \item[3.] A medical knowledge graph construction tool is designed and implemented. This tool is realized as a Web service based on a Browser/Server architecture, providing a user-friendly graphical interface and supporting multi-user collaborative construction of medical knowledge graphs.
-    \item[4.] The method in this article is evaluated through medical knowledge graph construction experiments and simulation experiments. The experimental results show that: In the knowledge graph construction experiment, the fusion accuracy reached 98\% during the execution of approximately 4,000 knowledge graph update operations, with precision and recall rates reaching 99\%. In a simulation experiment with 100 graphs and a node scale of 20,000, the total running time for 10,000 knowledge graph update operations was approximately 41 seconds, with an average running time of approximately 4 milliseconds per operation.
+    \item 基于分离逻辑和Coq证明助手，实现了操作系统内核关键模块的形式化验证，为高可信操作系统的工程实践提供了参考。
+    \item 验证了分离逻辑在操作系统形式化验证中的实用性，特别是在内存管理和并发同步方面的优势。
+    \item 通过工程实践，展示了形式化验证在操作系统验证和开发中的实际应用价值，为后续研究提供了经验。
 \end{itemize}
+\indent 本研究为操作系统形式化验证的工程实践提供了具体案例，对推动高可信操作系统的开发具有重要意义。
+\end{cabstract}
+\begin{eabstract}
+\indent Formal verification of operating systems (OS) is a critical approach to ensuring the correctness, security, and reliability of OS kernels. Traditional testing methods often fall short of comprehensively addressing potential errors in complex systems, while formal verification employs mathematical techniques to rigorously prove that a system adheres to its specifications. This study focuses on an engineering practice of formal verification for OS kernels, utilizing Hoare Logic and its extension, Separation Logic, along with the Coq proof assistant. The practice specifically targets the verification of key kernel modules, including memory management, process isolation, and concurrent synchronization mechanisms.\\
+\indent The paper begins by reviewing the state of the art in OS formal verification, summarizing the applications and limitations of theorem proving, model checking, and symbolic execution in this domain. It then introduces the foundational principles of Hoare Logic and Separation Logic, highlighting the latter's strengths in describing dynamic memory allocation and shared resource management in concurrent environments. Building on these principles, the study conducts formal specification and verification of critical OS kernel modules based on practical engineering requirements.\\
+\indent In this engineering practice, Separation Logic's resource separation properties are leveraged to clearly describe and verify resource usage across different kernel modules, preventing resource conflicts and race conditions. For handling concurrency complexities, Concurrent Separation Logic is employed to verify the correctness of resource sharing and synchronization mechanisms in multi-threaded environments. Using Coq's interactive proof mechanisms, the practice incrementally refines and verifies the kernel implementation against its high-level specifications, ensuring consistency between the code and its formal model.\\
+\indent The contributions of this study are mainly reflected in the following aspects:
+\begin{itemize}
+    \item formal verification of critical OS modules using Separation Logic and Coq, providing a practical reference for high-assurance OS development.
+    \item a demonstration of Separation Logic's effectiveness in memory management and concurrency.
+    \item a real-world case study highlighting the value of formal verification in OS engineering.
+\end{itemize}
+\indent This work contributes to advancing reliable OS development and lays the groundwork for future research on scalable and automated verification techniques.
 \end{eabstract}
-    
-    % vim:ts=4:sw=4
-    
+
+% vim:ts=4:sw=4

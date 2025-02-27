@@ -90,7 +90,7 @@
 % ctitlelines: 封面论文标题的下划线行数，设置为0则不在封面显示标题
 \ctitlelines{2}
 % ctitle: 论文标题，长标题用“\\”强制换行（v1.9.4-lite之前版本“\\”问题已修复）
-\ctitle{\pkuthss{} 操作系统内核关键模块的\\形式化验证}
+\ctitle{操作系统内核关键模块的形式化验证}
 \cauthor{颜森}
 \studentid{2201213088}
 \school{计算机学院}
@@ -105,7 +105,7 @@
 \ckeywords{操作系统验证，形式化验证}
 
 % 英文信息，只在英文摘要页显示
-\etitle{\pkuthss{} Formal Verification of Key Modules in Operating System Kernels}
+\etitle{Formal Verification of Key Modules in Operating System Kernels}
 \eauthor{Sen Yan}
 \emajor{Computer Software and Theory}
 % ementor: 教授 Prof., 副教授 A.P., 讲师 Lec.
@@ -175,12 +175,14 @@
     \include{chap/2-Feature}
     \include{chap/3-Advanced}
     \include{chap/4-Supplement}
+    \include{chap/5-Summary}
+    \include{chap/6-Conclusion}
 
     %% 正文中的附录部分
     \appendix
     % 要使参考文献列表参与章节编号，可将“bibintoc”改为“bibnumbered”
-    \printbibliography[heading=bibintoc]
-    \include{chap/Appendix}
+    %\printbibliography[heading=bibintoc]
+    %\include{chap/Appendix}
 
     %% 以下为正文之后的部分，默认不进行章节编号
     \backmatter
