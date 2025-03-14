@@ -8,4 +8,4 @@
 !*.def
 !*.tex
 !*.md
-!fig/*.pdf
+fig/*.pdf

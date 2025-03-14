@@ -1,4 +1,19 @@
 \chapter{相关理论基础与工具}
+\section{程序验证方法概述}
+
+软件工程领域确保程序正确性的方法主要分为动态方法和静态方法两类。动态方法需要将源代码编译为可执行文件，通过运行程序并输入测试用例来观察结果。这类方法的典型代表是软件测试，包括人工执行的单元测试和自动化的模糊测试。动态方法的优势在于能够快速定位具体错误，但其局限性也非常明显：首先，测试必须依赖可运行的环境；其次，由于程序执行路径和输入组合的复杂性，测试无法覆盖所有可能性，只能验证已执行路径的正确性，无法证明整个程序不存在缺陷。
+
+静态方法通过直接分析源代码来验证程序属性，无需实际运行程序。常见的静态方法包括静态分析、符号执行、定理证明和模型检测等。其中，常规静态分析技术（例如Coverity工具）虽然能快速扫描大规模代码，但会产生较高比例的误报结果，需要人工二次验证。符号执行技术通过符号化变量模拟程序执行路径，利用约束求解器验证路径可达性，但在处理循环结构和复杂分支时容易引发路径爆炸问题。定理证明方法要求开发者使用高阶逻辑形式化描述程序规范，并通过交互式工具（如Coq）逐步完成证明，这种方法虽然数学严谨，但需要投入大量专业人力资源，难以适应快速迭代的开发需求。程序验证作为静态方法的延伸，专注于自动化证明程序的基础安全属性（如内存安全、无除零错误等），其效果依赖于约束求解算法的持续优化。
+
+\subsection{操作系统关键模块形式化验证的动机与依据}
+
+操作系统内核中进程调度、内存管理和中断处理等关键模块的可靠性直接决定了整个系统的安全性。本文选择形式化验证方法主要基于以下三方面原因：
+\begin{itemize}
+    \item 传统测试方法存在本质缺陷。以Linux内核为例，历史漏洞中有三分之一以上涉及内存管理模块，而这些漏洞大多无法通过常规测试发现。内核模块需要处理硬件中断、多线程调度等复杂并发场景，其执行路径数量随线程数增长呈指数级上升，动态测试难以覆盖所有可能性。此外，内核与硬件设备的深度耦合导致测试结果严重依赖特定环境，难以保证验证结论的普适性。
+    \item 形式化验证具有数学完备性优势。该方法通过建立形式化模型对程序行为进行严格推演，能够覆盖所有可能的执行路径。例如，seL4微内核项目使用Isabelle/HOL工具验证了内核代码不存在缓冲区溢出等安全漏洞，微软使用TLA+语言验证了Hyper-V虚拟化平台的并发调度算法。对于硬件交互场景，形式化方法可通过抽象寄存器传输模型验证中断处理时序等关键属性，这是传统方法无法实现的。
+    \item 操作系统关键模块的特性适合形式化验证。现代微内核架构（如Zircon）将核心功能拆分为独立模块，降低了形式化建模的复杂度。同时，内核模块的代码规模通常控制在数万行以内，且更新频率较低，能够平衡验证成本与长期收益。工业界实践表明，对安全关键模块实施形式化验证的整体成本，仅为后期修复漏洞成本的15\%-20\%，具备显著的经济可行性。
+\end{itemize}
+
 \section{形式化验证方法概述}
 \label{sec:formal-methods}
 形式化验证是一种基于数学逻辑的严格验证技术，通过形式化建模、规约描述和自动化推理，证明系统满足其设计需求。其核心目标是消除自然语言描述的歧义性，并确保系统的正确性、安全性和可靠性。根据验证方法和工具的不同，形式化验证主要分为以下四类：
@@ -54,22 +69,34 @@
 \subsubsection{霍尔逻辑的形式化框架}
 霍尔逻辑通过\textbf{霍尔三元组} $\{P\}\;C\;\{Q\}$ 描述程序片段 $C$ 的前后状态约束，其中：
 \begin{itemize}
-    \item 前置条件 $P$ 与后置条件 $Q$ 为一阶谓词逻辑公式，分别表示程序执行前/后的状态断言；
+    \item 其中，$P$和$Q$是一阶逻辑公式，分别表示前置条件（Pre-Condition）和后置条件（Post-Condition）。 $C$表示一段程序源代码。 霍尔三元组的含义是，假定前置条件是有效的，那么在执行完程序后，后置条件将会是有效的。
     \item 推导规则（如顺序组合、条件分支、循环不变式）构成程序语义的公理化系统。
 \end{itemize}
+\subsection{霍尔逻辑的推理规则}
+在介绍霍尔逻辑的推理规则前，需要先说明推理规则（Inference Rule）的符号表示。推理规则一般表示为以下形式：
 
-例如，赋值语句的推理规则为：
 $$
-    \boxed{\{ Q[x \mapsto E] \} \quad x := E \quad \{ Q \}}
+\text{Name} \quad \frac{C_1 \quad C_2 \quad \cdots}{R}
 $$
+
 其中：
 \begin{itemize}
-    \item $Q[x \mapsto E]$ 表示将后置条件 $Q$ 中所有变量 $x$ 的自由出现替换为表达式 $E$；
-    \item 该规则表明：若赋值后 $Q$ 成立，则赋值前需将 $Q$ 中所有 $x$ 替换为表达式 $E$。
+    \item 左侧的 \text{Name} 表示规则名称
+    \item 横线上方的 $C_1, C_2, \ldots$ 表示前提条件
+    \item 横线下方的 $R$ 表示结论
 \end{itemize}
 
+该表示形式意味着：当满足前提条件 $C_1, C_2, \ldots$ 时，通过 \text{Name} 规则可以推导出结论 $R$。
+
+例如：
+$$
+\text{Apply} \quad \frac{A \quad A \Rightarrow B}{B}
+$$
+
+当存在前提条件 $A$ 和 $A \Rightarrow B$ 时，即可通过 Apply 规则推导出 $B$ 成立。
+
 \subsubsection{分离逻辑的扩展机制}
-传统霍尔逻辑难以建模动态内存操作（如指针别名、堆内存分配）。分离逻辑\cite{reynolds2002separation}通过引入\emph{分离合取}（$\sepcon$）与\emph{空间资源模型}，扩展了霍尔逻辑的表达能力：
+传统霍尔逻辑难以建模动态内存操作（如指针别名、堆内存分配）。分离逻辑通过引入\emph{分离合取}（$\sepcon$）与\emph{空间资源模型}，扩展了霍尔逻辑的表达能力：
 \begin{itemize}
     \item \textbf{分离合取}：断言$P \sepcon Q$表示资源被划分为互不相交的$P$和$Q$两部分，满足：
     \begin{equation}
@@ -170,7 +197,7 @@ $$
         \begin{equation}
             \forall p_1 \neq p_2,\ \mathrm{Res}(p_1) \sepcon \mathrm{Res}(p_2)
         \end{equation}
-    \item \textbf{并发同步}：验证锁、信号量等同步原语的原子性与无死锁性，通过并发分离逻辑的$\mathrm{Lock}(lk, R)$不变式实现。
+    \item \textbf{并发同步}：通过并发分离逻辑的$\mathrm{Lock}(lk, R)$不变式实现对锁、信号量等同步原语的原子性与无死锁性的验证。
 \end{itemize}
 
 \subsubsection{形式化验证方法论}
@@ -213,11 +240,57 @@ Coq是基于构造性演算（Calculus of Inductive Constations, CIC）的交互
 \end{itemize}
 
 \subsubsection{核心验证机制}
-\begin{enumerate}
-    \item \textbf{交互式证明开发}：采用策略语言（Ltac）分解目标，支持人工指导与自动化推理的协同（如$\mathsf{auto}$策略求解命题逻辑）。
-    \item \textbf{语义模型嵌入}：通过深层嵌入（Deep Embedding）将目标系统（如进程调度算法）建模为Coq数据类型，建立形式化规约与实现语义的严格映射。
-    \item \textbf{元理论可证性}：基于可靠性定理（$\vdash P \Rightarrow \models P$）确保证明器推导结果与模型语义的一致性。
+\label{subsubsec:coq-core}
+
+基于Coq定理证明器的形式化验证遵循以下方法学框架：
+
+\begin{enumerate}[leftmargin=*,label=\textbf{\arabic*}.]
+    \item \textbf{交互式演绎推理}：
+    \begin{itemize}
+        \item 采用\emph{向前推理}模式：从已知前提出发，通过策略序列（Tacticals）逐步构造证明项
+        \item 核心策略包括：
+            \begin{itemize}
+                \item \texttt{auto}：自动求解命题逻辑目标
+                \item \texttt{induction}：基于归纳类型的结构归纳策略
+                \item \texttt{omega}：线性算术约束求解
+            \end{itemize}
+        \item 支持用户自定义Ltac策略，封装领域特定推理规则。
+    \end{itemize}
+
+    \item \textbf{语义精确建模}：
+    \begin{itemize}
+        \item 采用\emph{深层嵌入（Deep Embedding）}方法：
+            \begin{equation}
+                \mathrm{OSState} \triangleq 
+                \begin{cases}
+                    \mathrm{SchedState} : \mathrm{Pid} \to \mathrm{Status} \\
+                    \mathrm{MemLayout} : \mathrm{Addr} \to \mathrm{Block} \\
+                    \vdots
+                \end{cases}
+            \end{equation}
+        \item 建立\emph{语法-语义映射}：
+            \begin{equation}
+                \llbracket C \rrbracket : \mathrm{State} \to \mathrm{State}
+            \end{equation}
+            其中$C$为C代码语句，$\mathrm{State}$为形式化系统状态
+    \end{itemize}
+
+    \item \textbf{元理论属性验证}：
+    \begin{itemize}
+        \item 基于\emph{构造演算（CIC）}的可靠性定理：
+            \begin{equation}
+                \vdash_{\mathrm{Coq}} P \implies \models_{\mathrm{CIC}} P
+            \end{equation}
+        \item 通过归纳定义与递归策略证明关键属性：
+            \begin{itemize}
+                \item 类型安全性（Type Safety）
+                \item 进程状态机收敛性
+                \item 资源管理协议一致性
+            \end{itemize}
+    \end{itemize}
 \end{enumerate}
+
+该方法学已成功应用于CompCert编译器\cite{leroy2009formal}和seL4微内核\cite{klein2009sel4}等系统验证，证明了其在工业级代码验证中的有效性。
 
 \subsection{Coq在验证中的应用}
 \label{subsec:coq-applications}
@@ -226,16 +299,16 @@ Coq是基于构造性演算（Calculus of Inductive Constations, CIC）的交互
 \begin{itemize}
     \item \textbf{分层验证架构}：
     \begin{itemize}
-        \item \textbf{抽象规约层}：定义系统级性质（如无死锁性）为一阶逻辑断言；
+        \item \textbf{抽象规约层}：定义系统级性质为一阶逻辑断言；
         \item \textbf{精化验证层}：通过模拟关系（$\mathsf{Sim}(M_{abs}, M_{conc})$）证明抽象模型与具体实现的语义等价性；
-        \item \textbf{代码验证层}：基于分离逻辑（Separation Logic）验证内核代码满足资源隔离与原子性约束。
+        \item \textbf{代码验证层}：基于分离逻辑验证内核代码满足资源隔离与原子性约束。
     \end{itemize}
     
     \item \textbf{关键性质验证}：
     \begin{itemize}
         \item \textbf{安全属性}：通过不变式（Inv）验证内存访问安全性（如%
         $\forall p,\>\mathsf{Access}(p) \mathrel{\Rightarrow} \mathsf{OwnedBy}(p, \mathit{proc})$）；
-        \item \textbf{活性属性}：利用秩函数（Ranking Functions）证明调度算法的无饥饿性（Starvation-Freedom）。
+        \item \textbf{活性属性}：利用秩函数证明调度算法的无饥饿性。
     \end{itemize}
 \end{itemize}
 
@@ -253,79 +326,43 @@ Coq是基于构造性演算（Calculus of Inductive Constations, CIC）的交互
     \item \textbf{硬件模型抽象}：构建抽象外设模型（如$\mathsf{MMUState}$）隔离平台依赖性。
 \end{itemize}
 
-\noindent Coq以其严谨的逻辑基础与灵活的工程适配能力，已成为操作系统形式化验证的核心基础设施。其方法学框架为构建高可信系统提供了理论完备性与实践可行性的双重保障。
+Coq以其严谨的逻辑基础与灵活的工程适配能力，已成为操作系统形式化验证的核心基础设施。其方法学框架为构建高可信系统提供了理论完备性与实践可行性的双重保障。
+
 \section{VST-IDE验证工具链}
 \label{sec:vst-ide}
 
-\subsection{内存管理模块的形式化验证}
+\subsection{内存管理的形式化验证}
 \label{subsec:mem-verification}
 
-\noindent VST-IDE通过分离逻辑对动态内存管理进行形式化规约与验证，具体流程如下：
-
-\subsubsection{堆分配器规约}
-\begin{equation}
-\label{eq:malloc-spec}
-\hoare{\mathrm{emp}}{\mathtt{malloc}(n)}{\exists p.\ \mathrm{valid\_ptr}(p) \ast \mathrm{block}(p, n)}
-\end{equation}
-\noindent 其中：
+本工作通过分离逻辑建立动态内存管理的验证框架：
 \begin{itemize}
-    \item $\mathrm{emp}$ 表示空堆断言
-    \item $\mathrm{valid\_ptr}(p)$ 保证指针$p$的有效性
-    \item $\mathrm{block}(p, n)$ 声明$p$指向大小为$n$字节的连续内存块
-    \item $\ast$ 为分离逻辑合取运算符
+    \item \textbf{形式化规约}：基于空堆断言与内存块分离性定义，构建堆分配器的霍尔逻辑三元组
+    \item \textbf{分层验证}：采用自动化策略生成与人工辅助结合的分层证明机制
+    \item \textbf{验证覆盖}：实现内存有效性、空间隔离性等核心性质的机器检验
 \end{itemize}
 
-\subsubsection{自动化验证实现}
+\subsection{进程隔离的形式化方法}
+\label{subiso:proc-isolation}
+
+\subsubsection{能力模型}
 \begin{itemize}
-    \item 生成Coq验证代码：
-    \begin{itemize}
-        \item \texttt{*\_proof\_goal.v}（VST-IDE生成的验证目标）
-        \item \texttt{*\_proof\_auto.v}（VST-IDE自动证明的命题）
-        \item \texttt{*\_proof\_manual.v}（用户使用Coq交互式证明器需要证明的命题）
-    \end{itemize}
-    \item 覆盖率达90\%（通过覆盖率指标$\mathrm{cov\_rate} \geq 0.9$）
+    \item \textbf{资源归属建模}：通过迭代分离合取构建进程资源所有权谓词
+    \item \textbf{元数据绑定}：建立资源实体与进程元数据的严格映射关系
 \end{itemize}
 
-\subsection{进程隔离机制的验证方法}
-\label{subsec:proc-isolation}
-
-\subsubsection{能力模型（Capability Model）}
-\label{subsubsec:capability-model}
-
-\noindent 定义进程资源归属谓词：
-\begin{equation}
-\label{eq:proc-res}
-\mathrm{ProcRes}(p) \triangleq \ast_{r \in \mathrm{Res}(p)} \mathrm{own}(r,\,p)
-\end{equation}
-\noindent 其中：
+\subsubsection{隔离性保证}
 \begin{itemize}
-    \item $\mathrm{Res}(p)$ 表示进程$p$拥有的资源集合
-    \item $\mathrm{own}(r,\,p)$ 声明资源$r$归属进程$p$，满足：
-        \begin{equation}
-        \mathrm{own}(r,\,p) \triangleq r \hookrightarrow_p \mathrm{meta}(p)
-        \end{equation}
-    \item $\ast$ 为分离逻辑的迭代合取运算符，满足：
-        \begin{equation}
-        \ast_{i=1}^n P_i \equiv P_1 \ast \cdots \ast P_n
-        \end{equation}
+    \item \textbf{空间分离定理}：证明进程资源集合的互斥性与访问不可达性
+    \item \textbf{无干扰性约束}：确保资源操作不会引发跨进程的副作用
 \end{itemize}
 
-\subsubsection{隔离性定理}
-\begin{equation}
-\label{eq:noninterference}
-\forall p_1 \neq p_2,\ \mathrm{ProcRes}(p_1) \ast \mathrm{ProcRes}(p_2) \vdash \bot
-\end{equation}
-\noindent 该定理保证：
-\begin{itemize}
-    \item 分离性：$\mathrm{Res}(p_1) \cap \mathrm{Res}(p_2) = \emptyset$，进程间资源互斥
-    \item 无干扰性：进程无法访问不归属于自己的资源
-\end{itemize}
+该方法为多任务系统的安全隔离提供了可验证的数学模型。
 
 \subsection{上下文切换的形式化验证}
 \label{subsec:context-verification}
 
 \subsubsection{验证方法论}
-\noindent 基于分离逻辑的验证框架，通过以下三重保障确保上下文切换的正确性：
+基于分离逻辑的验证框架，通过以下三重保障确保上下文切换的正确性：
 \begin{itemize}
     \item \textbf{原子性保证}：通过CAS原语验证状态切换的不可分割性
     \item \textbf{资源隔离性}：维护进程资源的分离合取特性
@@ -353,20 +390,20 @@ Coq是基于构造性演算（Calculus of Inductive Constations, CIC）的交互
     \item \textbf{缺陷检测能力}：发现并修复内核中多处潜在Bug；
 \end{itemize}
 
-\noindent VST-IDE通过形式化验证方法与工程实践的深度融合，为安全关键操作系统的可信构建提供了可复用的工业级解决方案。
+VST-IDE通过形式化验证方法与工程实践的深度融合，为安全关键操作系统的可信构建提供了可复用的工业级解决方案。
 \section*{本章小结}
 \label{sec:chapter-summary}
 
-\noindent 本章系统介绍了操作系统形式化验证的核心理论与工具链，主要内容如下：
+本章系统介绍了操作系统形式化验证的核心理论与工具链，主要内容如下：
 
 \begin{enumerate}[leftmargin=*]
-    \item \textbf{形式化验证方法}：阐述了一阶逻辑、霍尔逻辑与分离逻辑的基本原理，重点讨论了分离逻辑的$\sepcon$运算符（公式\ref{eq:lock-inv}）及其在内存管理和并发控制中的应用。
+    \item \textbf{形式化验证方法}：阐述了一阶逻辑、霍尔逻辑与分离逻辑的基本原理，重点讨论了分离逻辑的$\sepcon$运算符及其在内存管理和并发控制中的应用。
     
-    \item \textbf{Coq定理证明器}：说明了Coq的依赖类型系统与交互式证明机制，分析了其在进程隔离验证（\ref{subsec:coq-applications}）和资源管理建模中的具体应用。
+    \item \textbf{Coq定理证明器}：说明了Coq的依赖类型系统与交互式证明机制，分析了其在进程隔离验证和资源管理建模中的具体应用。
     
-    \item \textbf{VST-IDE工具链}：描述了该工具链的分层验证架构（\ref{subsec:toolchain-arch}），包括自动化证明生成、人工交互验证等关键流程，并以内存分配器（公式\ref{eq:malloc-spec}）为例展示了验证实践。
+    \item \textbf{VST-IDE工具链}：描述了该工具链的分层验证架构，包括自动化证明生成、人工交互验证等关键流程。
     
     \item \textbf{操作系统验证实践}：概括了鸿蒙LiteOS-m内核核心模块模块的验证方法。
 \end{enumerate}
 
-\noindent 本章内容为后续鸿蒙LiteOS-m的具体验证工作奠定了理论基础，之后将详细展开实际案例分析。
+本章内容为后续鸿蒙LiteOS-m的具体验证工作奠定了理论基础，之后将详细展开实际案例分析。

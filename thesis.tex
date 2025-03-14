@@ -38,7 +38,43 @@
 \usepackage{float}
 
 \usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage{enumitem}
+\usepackage{graphicx} % 图片支持
+% 在导言区添加全局列表设置
+% 导言区添加
+\usepackage{enumitem}
 
+% 定义多级列表样式
+\setlist{
+  topsep=0pt,               % 移除列表顶部间距
+  itemsep=2pt,              % 行间距减少至2pt
+  parsep=2pt,               % 段落间距同步调整
+  leftmargin=*,             % 继承父级缩进
+  labelindent=1em           % 标签缩进统一为1em
+}
+
+% 定制三级列表缩进
+\setlist[enumerate,1]{      % 一级枚举列表
+  label=\textbf{\arabic*.},
+  leftmargin=2.5em
+}
+\setlist[itemize,1]{        % 一级条目列表
+  label=\textbullet,
+  leftmargin=3em
+}
+\setlist[itemize,2]{        % 二级条目列表
+  label=--,
+  leftmargin=4em
+}
+\setlist[itemize,3]{        % 三级条目列表
+  label=\normalfont\textasteriskcentered,
+  leftmargin=5em
+}
+
+% 定义语义括号宏
+\usepackage{stmaryrd}
+\newcommand{\sem}[1]{\lbrack\!\lbrack #1 \rbrack\!\rbrack}
 \newtheoremstyle{mytheoremstyle}% 请替换为你喜欢的样式名
 	{0.5em}% 上间距
 	{0.5em}% 下间距
@@ -70,6 +106,48 @@
 \setlength{\bibitemsep}{3bp}
 % 载入参考文献数据库（注意不要省略“.bib”）
 \addbibresource{thesis.bib}
+% 添加至导言区
+\usepackage{listings}  % 解决 lstlisting 环境未定义问题
+\usepackage{xcolor}    % 可选：支持代码高亮颜色配置
+
+% 基础配置示例（可选）
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    frame=single,
+    tabsize=4
+}
+
+% 自定义Coq语言高亮规则
+\lstdefinelanguage{Coq}{
+    keywords={Lemma, Theorem, Proof, Qed, Definition, Fixpoint, Inductive, CoInductive,
+              Structure, Record, Section, Variable, Variables, Hypothesis, Hypotheses,
+              Require, Import, Export, Module, End, Scope, Open, Local, Global,
+              Let, Ltac, Notation, Infix, Tactic, Set, Unset, Show, Eval, Check,
+              match, with, end, as, in, return, fun, if, then, else, forall, exists,
+              Type, Prop, Set, true, false, bool, option, Some, None},
+    keywordstyle=\color{blue}\bfseries,
+    sensitive=true,
+    morecomment=[l]{(*},
+    morecomment=[n]{(*}{*)},
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    basicstyle=\ttfamily\small,
+    showstringspaces=false
+}
+
+% 设置默认列表样式
+\lstset{
+    language=Coq,  % 默认使用Coq语言
+    frame=single,
+    rulecolor=\color{black},
+    breaklines=true
+}
 
 % 示例文档用包和设定，该段均可移除
 %\usepackage{enumitem,fancyvrb} % 列表相关
